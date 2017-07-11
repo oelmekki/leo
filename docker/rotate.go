@@ -9,15 +9,17 @@ package docker
  * - update nginx upstream to point to new container
  * - reload nginx
  * - wait for old container to have processed its requests
- * - stop the previous container with docker: docker stop <app>_web_1
- * - remove the previous container with docker : docker rm <app>_web_1
+ * - stop the previous container with docker: docker stop <app>_web_<container_number>
+ * - remove the previous container with docker : docker rm <app>_web_<container_number>
  * - scale the service down : docker-compose scale web=1
  * 
- * Regarding the part about waiting for containers, it's just blind timeouts, for now:
- * 20 secs waiting for new container to boot, 10 secs waiting for old container to
- * be done with its old requests.
+ * Regarding the part about waiting for containers, it's just blind timeouts,
+ * for now: `newContainerGraceTime` secs waiting for new container to boot,
+ * `oldContainerGraceTime` secs waiting for old container to be done with its
+ * old requests.
  *
- * So it's imperative your container takes less than 20 secs to boot up to avoid downtime.
+ * So it's imperative your container takes less than `newContainerGraceTime`
+ * secs to boot up to avoid downtime.
  */
 
 import (
@@ -155,6 +157,10 @@ func startServices( appName string ) ( err error ) {
 	return
 }
 
+/*
+ * The output order for `docker-compose ps -q` is not guaranteed: sometime the oldest
+ * container is listed first, sometime it's listed second.
+ */
 func containerIdsFor( service string ) ( oldContainer, newContainer string, err error ) {
 	out, err := DockerCompose( "ps", "-q", service )
 	if err != nil { return }

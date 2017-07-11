@@ -23,9 +23,9 @@ continue to maintain it : I may decide an other tool is better any time.
 
 Why did I publish it, then, you'll ask? Finding a way to do zero downtime
 deployment with docker-compose was hard enough for me, so I decided to publish
-leo's sources so that people wanting to do the same thing have an example about
-how to do it. It may also be a good bootstrap base for people wanting to build
-their own tool.
+leo's sources so that people wanting to do the same thing [have an example about
+how to do it](https://github.com/oelmekki/leo/blob/master/docker/rotate.go).
+It may also be a good bootstrap base for people wanting to build their own tool.
 
 
 ## Prerequisites
@@ -94,6 +94,25 @@ be able to ssh to leo-deploy user after that (needed to use leo-cli).
 * you have a `web` service in your docker-compose file
 * your web app listens on port 5000
 * you don't define port mapping for `web` service in dockerfile (needed for rotating services, nginx will point to container ip directly)
+
+
+## Credits
+
+[Dokku](https://github.com/dokku/dokku) has been instrumental when it comes to
+find a way to manage nginx config to point to docker containers, and
+[dokku-letsencrypt](https://github.com/dokku/dokku-letsencrypt) when it comes
+to find a way to retrieve ssl certificate without shutting the app down. A lot
+of thanks to them!
+
+I've used dokku for two years, and it's an incredibly cool software. I stopped
+using it because I realized that I would not know what to do to fix my
+production environment if it was to break, I could not debug dokku by myself,
+especially not when shit happens and production is down. This is something I'm
+not comfortable with, but that's me.
+
+If you want something easy to manage docker services on a single host without feeling the
+need for mass destruction weapon like kubernetes, dokku is exactly what you need!
+
 
 ## Usage
 
